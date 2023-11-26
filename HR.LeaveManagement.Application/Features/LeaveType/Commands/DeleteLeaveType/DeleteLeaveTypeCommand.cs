@@ -2,5 +2,4 @@
 
 namespace HR.LeaveManagement.Application.Features.LeaveType.Commands.DeleteLeaveType;
 
-public record DeleteLeaveTypeCommand(int leaveTypeId) : IRequest<Unit>;
-
+public record DeleteLeaveTypeCommand(int leaveTypeId) : IRequest<bool>;

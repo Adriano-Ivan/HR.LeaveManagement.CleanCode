@@ -1,23 +1,26 @@
 ﻿using AutoMapper;
+using HR.LeaveManagement.Application.Contracts.Logging;
 using HR.LeaveManagement.Application.Contracts.Persistence;
 using HR.LeaveManagement.Application.Exceptions;
 using MediatR;
 
 namespace HR.LeaveManagement.Application.Features.LeaveType.Commands.UpdateLeaveType;
 
-public class UpdateLeaveTypeCommandHandler : IRequestHandler<UpdateLeaveTypeCommand, Unit>
+public class UpdateLeaveTypeCommandHandler : IRequestHandler<UpdateLeaveTypeCommand, bool>
 {
     private readonly IMapper _mapper;
     private readonly ILeaveTypeRepository _leaveTypeRepository;
+    private readonly IAppLogger<UpdateLeaveTypeCommandHandler> _logger;
 
     public UpdateLeaveTypeCommandHandler(IMapper mapper, ILeaveTypeRepository 
-        leaveTypeRepository)
+        leaveTypeRepository, IAppLogger<UpdateLeaveTypeCommandHandler> logger)
     {
         this._mapper = mapper;
         this._leaveTypeRepository = leaveTypeRepository;
+        this._logger = logger;
     }
 
-    public async Task<Unit> Handle(UpdateLeaveTypeCommand request, CancellationToken cancellationToken)
+    public async Task<bool> Handle(UpdateLeaveTypeCommand request, CancellationToken cancellationToken)
     {
         // Validate
         var validator = new UpdateLeaveTypeCommandValidator(this._leaveTypeRepository);
@@ -25,7 +28,10 @@ public class UpdateLeaveTypeCommandHandler : IRequestHandler<UpdateLeaveTypeComm
 
         if (validationResult.Errors.Any())
         {
+            _logger.LogWarning("Validation errors in update request for {0} - {1}", 
+                nameof(LeaveType), request.Id);
             throw new BadRequestException("Invalid Leave Type", validationResult);
+
         }
 
         // Convert to entity
@@ -34,7 +40,7 @@ public class UpdateLeaveTypeCommandHandler : IRequestHandler<UpdateLeaveTypeComm
         // Update
         await _leaveTypeRepository.UpdateAsync(leaveType);  
 
-        return Unit.Value;
+        return true;
     }
 }
 

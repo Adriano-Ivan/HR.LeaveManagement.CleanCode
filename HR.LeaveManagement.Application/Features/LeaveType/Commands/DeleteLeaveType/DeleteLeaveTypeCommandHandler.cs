@@ -5,7 +5,7 @@ using MediatR;
 
 namespace HR.LeaveManagement.Application.Features.LeaveType.Commands.DeleteLeaveType;
 
-public class DeleteLeaveTypeCommandHandler : IRequestHandler<DeleteLeaveTypeCommand, Unit>
+public class DeleteLeaveTypeCommandHandler : IRequestHandler<DeleteLeaveTypeCommand, bool>
 {
     private readonly ILeaveTypeRepository _leaveTypeRepository;
 
@@ -15,7 +15,7 @@ public class DeleteLeaveTypeCommandHandler : IRequestHandler<DeleteLeaveTypeComm
         this._leaveTypeRepository = leaveTypeRepository;
     }
 
-    public async Task<Unit> Handle(DeleteLeaveTypeCommand request, CancellationToken cancellationToken)
+    public async Task<bool> Handle(DeleteLeaveTypeCommand request, CancellationToken cancellationToken)
     {
         // retrieve leaveType
         var leaveType = await _leaveTypeRepository.GetByIdAsync(request.leaveTypeId);
@@ -27,10 +27,10 @@ public class DeleteLeaveTypeCommandHandler : IRequestHandler<DeleteLeaveTypeComm
         }
 
         // Delete
-        await _leaveTypeRepository.DeleteAsync(request.leaveTypeId);
+        await _leaveTypeRepository.DeleteAsync(leaveType);
 
 
-        return Unit.Value;
+        return true;
     }
 }
 
