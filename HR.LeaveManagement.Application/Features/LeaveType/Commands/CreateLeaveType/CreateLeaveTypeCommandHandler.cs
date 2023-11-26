@@ -5,7 +5,7 @@ using MediatR;
 
 namespace HR.LeaveManagement.Application.Features.LeaveType.Commands.CreateLeaveType;
 
-public class CreateLeaveTypeCommandHandler : IRequestHandler<CreateLeaveTypeCommand, int>
+public sealed class CreateLeaveTypeCommandHandler : IRequestHandler<CreateLeaveTypeCommand, int>
 {
     private readonly IMapper _mapper;
     private readonly ILeaveTypeRepository _leaveTypeRepository;
